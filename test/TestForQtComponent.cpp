@@ -30,10 +30,12 @@ void TestForQtComponent::initalTestForQtComponent()
     QList<QList<QWidget*>> components=
     {
         {
-            new collectButton
+            new collectButton,
+            new QLabel("status")
         },
         {
-            new clickOptions
+            new clickOptions,
+            new QLabel("answer")
         }
     };
     for(int i=0;i<components.length();i++)
@@ -41,10 +43,28 @@ void TestForQtComponent::initalTestForQtComponent()
         QWidget* w=createTestWidget("TestWidget-"+QString::number(i+1));
         for(int j=0;j<components.at(i).length();j++)
         {
-            w->layout()->addWidget(components.at(i).at(j));
+            static_cast<QGridLayout*>(w->layout())->addWidget(components.at(i).at(j),0,j);
         }
         windows.push_back(w);
     }
+    /* TestWidget-1 */
+    collectButton* collectBtn=static_cast<collectButton*>(windows.at(0)->children().at(1));
+    QLabel* collectLabel=static_cast<QLabel*>(windows.at(0)->children().at(2));
+    connect(collectBtn,&collectButton::collected,[=]()
+    {
+        collectLabel->setText("已收藏");
+    });
+    connect(collectBtn,&collectButton::uncollected,[=]()
+    {
+        collectLabel->setText("未收藏");
+    });
+    /* TestWidget-2 */
+    clickOptions* options=static_cast<clickOptions*>(windows.at(1)->children().at(1));
+    QLabel* optionLabel=static_cast<QLabel*>(windows.at(1)->children().at(2));
+    connect(options,&clickOptions::selectOption,[=](int i)
+    {
+        optionLabel->setText(QString(static_cast<char>(i+'A')));
+    });
     for(QWidget* i: windows)
         i->show();
 }
