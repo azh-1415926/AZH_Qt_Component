@@ -4,27 +4,56 @@
 #include <calcMD5.hpp>
 #include <collectbutton.h>
 #include <clickoptions.h>
+#include <QGridLayout>
 
 TestForQtComponent::TestForQtComponent(QWidget* parent)
     : QMainWindow(parent)
 {
-    this->resize(600,800);
-    collectButton* btn=new collectButton(this);
-    clickOptions* option=new clickOptions(this);
-    labelOfTest1=new QLabel("label",this);
-    labelOfTest1->setGeometry(100,0,50,50);
-    option->setGeometry(200,0,200,400);
-    connect(btn,&collectButton::collected,this,[&]()
-    {
-        labelOfTest1->setText("已收藏");
-    });
-    connect(btn,&collectButton::uncollected,this,[&]()
-    {
-        labelOfTest1->setText("取消收藏");
-    });
+    initalTestForQtComponent();
 }
 
 TestForQtComponent::~TestForQtComponent()
 {
-    delete labelOfTest1;
+    for(QWidget* i: windows)
+        delete i;
+}
+
+void TestForQtComponent::closeEvent(QCloseEvent *e)
+{
+    for(QWidget* i: windows)
+        i->close();
+}
+
+void TestForQtComponent::initalTestForQtComponent()
+{
+    this->resize(500,500);
+    QList<QList<QWidget*>> components=
+    {
+        {
+            new collectButton
+        },
+        {
+            new clickOptions
+        }
+    };
+    for(int i=0;i<components.length();i++)
+    {
+        QWidget* w=createTestWidget("TestWidget-"+QString::number(i+1));
+        for(int j=0;j<components.at(i).length();j++)
+        {
+            w->layout()->addWidget(components.at(i).at(j));
+        }
+        windows.push_back(w);
+    }
+    for(QWidget* i: windows)
+        i->show();
+}
+
+QWidget *TestForQtComponent::createTestWidget(const QString& windowTitle)
+{
+    QWidget* w=new QWidget;
+    w->setWindowTitle(windowTitle);
+    w->resize(500,500);
+    w->setLayout(new QGridLayout);
+    return w;
 }
