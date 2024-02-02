@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED) # Qt COMPONENTS
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Core5Compat)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Core5Compat REQUIRED) # Qt COMPONENTS
 
 aux_source_directory(${ROOT_DIR}/test srcs)
 
@@ -27,5 +27,5 @@ add_executable(${PROJECT_NAME}
 add_subdirectory(${ROOT_DIR}/component component_dir)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${ROOT_DIR}/component)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets) # Qt5 Shared Library
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Core5Compat) # Qt5 Shared Library
 target_link_libraries(${PROJECT_NAME} PRIVATE Component)

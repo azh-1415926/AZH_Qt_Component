@@ -1,10 +1,10 @@
 #include "TestForQtComponent.h"
 
 #include <settingFile.h>
-#include <calcMD5.hpp>
 #include <collectbutton.h>
 #include <clickoptions.h>
 #include <QGridLayout>
+#include <QCryptographicHash>
 
 TestForQtComponent::TestForQtComponent(QWidget* parent)
     : QMainWindow(parent)
@@ -65,6 +65,7 @@ void TestForQtComponent::initalTestForQtComponent()
     {
         optionLabel->setText(QString(static_cast<char>(i+'A')));
     });
+    testCalcMD5("azh40237040");
     for(QWidget* i: windows)
         i->show();
 }
@@ -76,4 +77,10 @@ QWidget *TestForQtComponent::createTestWidget(const QString& windowTitle)
     w->resize(500,500);
     w->setLayout(new QGridLayout);
     return w;
+}
+
+void TestForQtComponent::testCalcMD5(const QString& str)
+{
+    QString md5 = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5).toHex();
+    qDebug()<<md5;
 }

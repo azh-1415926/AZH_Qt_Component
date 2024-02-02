@@ -18,4 +18,5 @@ protected:
 private:
     void initalTestForQtComponent();
     QWidget* createTestWidget(const QString& windowTitle="");
+    void testCalcMD5(const QString& str);
 };
