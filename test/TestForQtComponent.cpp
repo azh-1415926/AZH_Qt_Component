@@ -1,6 +1,6 @@
 #include "TestForQtComponent.h"
 
-#include <settingFile.h>
+#include <settingFile.hpp>
 #include <collectbutton.h>
 #include <clickoptions.h>
 #include <QGridLayout>
