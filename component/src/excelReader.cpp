@@ -1,4 +1,4 @@
-#include <excelReader.h>
+#include "excelReader.h"
 
 #include <QProgressDialog>
 #include <QFile>
@@ -12,23 +12,20 @@ excelReader::excelReader(QObject* parent)
     , rows(0), columns(0)
     , readFlag(0), reloadFlag(0)
     #ifdef _WIN32
-    , excel(new QAxObject("Excel.Application"))
+    , excel(nullptr)
     #endif
 {
-    /* 不显示 excel 进程的窗口 */
-    #ifdef _WIN32
-    excel->dynamicCall("SetVisible (bool Visible)","false");
-    /* 忽略所有警告退出（比如不保存退出）*/
-    excel->setProperty("DisplayAlerts", false);
-    #endif
 }
 
 excelReader::~excelReader()
 {
     #ifdef _WIN32
     /* 退出 excel 进程，并释放内存 */
-    excel->dynamicCall("Quit(void)");
-    delete excel;
+    if(excel!=nullptr)
+    {
+       excel->dynamicCall("Quit(void)");
+        delete excel; 
+    }
     #endif
 }
 
@@ -36,6 +33,8 @@ excelReader::~excelReader()
 void excelReader::readExcel(const QString& pathOfExcel)
 {
     #ifdef _WIN32
+    if(excel==nullptr)
+        initalExcel();
     /* 路径为空立即返回 */
     if(pathOfExcel.isEmpty())
         return;
@@ -114,129 +113,21 @@ void excelReader::readExcel(const QString& pathOfExcel)
     /* 将读取标记置为 1，表明已读取数据，将进度置为 100%。发送 readed 信号，告诉其他窗口数据读取完毕 */
     readFlag=1;
     process.setValue(100);
-    #ifdef QT_DEBUG
-    importCSV("2022.csv");
-    importTestCSV();
-    #endif
     emit readed();
     if(reloadFlag==1)
         emit reload();
     #endif
 }
 
-/* 读取指定路径的 CSV 文件 */
-void excelReader::readCSV(const QString &pathOfCSV)
+#ifdef _WIN32
+
+void excelReader::initalExcel()
 {
-    /* 路径为空立即返回 */
-    if(pathOfCSV.isEmpty())
-        return;
-    reloadFlag=(path.isEmpty()||path==pathOfCSV)?(0):(1);
-    /* 若当前导入的路径与上一次路径一致，则没必要再读取一次，直接返回 */
-    if(path==pathOfCSV)
-        return;
-    /* 更新 path 为当前导入的 excel 文件路径 */
-    path=pathOfCSV;
-    QFile file(pathOfCSV);
-    /* 只读、转换行尾结束符为本地格式 */
-    if(file.open(QIODevice::ReadOnly|QFile::Text))
-    {
-        /* 若之前读过数据，那么 data 不为空，则需要清空 */
-        if(!data.isEmpty())
-            data.clear();
-        QTextStream stream(&file);
-        QString line;
-        #if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
-            stream.setCodec("utf-8");
-        #endif
-        /* 读取所有行，并插入到 data 中 */
-        while(!stream.atEnd())
-        {
-            line=stream.readLine();
-            QRegularExpression reg("^\\d{1,4}AZH{1}[C,D,H,J,K,L,W,Y,Z,Q,R,S,1-6]{1}AZH+[\\s\\S]*");
-            QRegularExpressionValidator v(reg,0);
-            int pos=0;
-            QValidator::State result=v.validate(line,pos);
-            QVector<QString> vec=line.split("AZH").toVector();
-            if(result!=QValidator::State::Acceptable)
-            {
-                if(data.isEmpty())
-                    data.push_back(vec);
-                else
-                {
-                    QVector<QString>& temp=data[data.length()-1];
-                    if(!temp.isEmpty())
-                    {
-                        temp[temp.length()-1].append(vec.constFirst());
-                        vec.removeFirst();
-                    }
-                    if(!vec.isEmpty())
-                        temp.append(vec);
-                }
-            }
-            else
-                data.push_back(vec);
-        }
-        rows=data.length();
-        columns=data[0].length();
-        #ifdef QT_DEBUG
-        importTestCSV();
-        #endif
-        file.close();
-        readFlag=1;
-        emit readed();
-        if(reloadFlag==1)
-            emit reload();
-    }
+    excel=new QAxObject("Excel.Application");
+    /* 不显示 excel 进程的窗口 */
+    excel->dynamicCall("SetVisible (bool Visible)","false");
+    /* 忽略所有警告退出（比如不保存退出）*/
+    excel->setProperty("DisplayAlerts", false);
 }
 
-void excelReader::importCSV(const QString &pathOfCSV)
-{
-    /* 路径为空、文件未读取立即返回 */
-    if(pathOfCSV.isEmpty()||!isRead()||!pathOfCSV.endsWith(".csv"))
-        return;
-    QFile file(pathOfCSV);
-    if (file.open(QIODevice::WriteOnly | QFile::Text))
-    {
-        QTextStream text(&file);
-        #if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
-            text.setCodec("utf-8");
-        #endif
-        for(int i=0;i<rows;i++)
-        {
-            for(int j=0;j<columns;j++)
-                text<<data[i][j]<<(j!=columns-1?"AZH":"");
-            text <<"\n";
-        }
-        file.close();
-    }
-}
-
-#ifdef QT_DEBUG
-/* 将数据处理错误的数据导出到 test.csv */
-void excelReader::importTestCSV()
-{
-    QFile testFile("test.csv");
-    if (testFile.open(QIODevice::WriteOnly | QFile::Text))
-    {
-        QTextStream text(&testFile);
-        #if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
-            text.setCodec("utf-8");
-        #endif
-        for(int i=0;i<data.length();i++)
-        {
-            int option=data[i].length()!=9?data[i][7].trimmed()[0].toUpper().unicode()-'A':1;
-            if(option<0||option>=4||data[i].length()!=9)
-            {
-                for(int j=0;j<data[i].length();j++)
-                    text<<data[i][j]<<(j!=data[i].length()-1?"AZH":"");
-                text <<"\n";
-                if(option<0||option>=4)
-                    qDebug()<<"index of "<<i<<" 's question answer error,is "<<option;
-                else    
-                    qDebug()<<"index of "<<i<<" 's question length error,is "<<data[i].length();
-            }
-        }
-        testFile.close();
-    }
-}
 #endif

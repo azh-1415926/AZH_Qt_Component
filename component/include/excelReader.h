@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 
 #ifdef _WIN32
@@ -36,15 +37,13 @@ class excelReader : public QObject
 
     public slots:
         void readExcel(const QString& pathOfExcel);
-        void readCSV(const QString& pathOfCSV);
-        void importCSV(const QString& pathOfCSV);
 
     signals:
         void readed();
         void reload();
 
     private:
-        #ifdef QT_DEBUG
-        void importTestCSV();
+        #ifdef _WIN32
+            void initalExcel();
         #endif
 };
