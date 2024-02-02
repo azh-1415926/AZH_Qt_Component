@@ -1,10 +1,11 @@
 #include "clickoptions.h"
 
+#include "clicklabel.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QPainterPath>
-#include <QMessageBox>
 
 clickOptions::clickOptions(QWidget *parent)
     : QGroupBox(parent)
@@ -165,7 +166,6 @@ void clickOptions::initalOptions()
         {
             this->checkedOption=i;
             emit selectOption(i);
-            displayAnswer(true);
         });
         /* 标签被点击，则选中对应的按钮、更新被选中的选项，且发送 selectOption 信号 */
         connect(labels[i],&clickLabel::clicked,this,[=]()
@@ -173,7 +173,6 @@ void clickOptions::initalOptions()
             buttons[i]->setChecked(true);
             this->checkedOption=i;
             emit selectOption(i);
-            displayAnswer(true);
         });
         #ifdef __ANDROID__
         connect(labels[i],&clickLabel::hover,this,&clickOptions::displayHover);
