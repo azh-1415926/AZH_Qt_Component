@@ -1,6 +1,7 @@
 #include "switchquestion.h"
 
-#include "collectbutton.h"
+#include "collectButton.h"
+#include "clickOptions.h"
 
 #include <QGridLayout>
 
