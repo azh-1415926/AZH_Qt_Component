@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLICK_LABEL_H
+#define CLICK_LABEL_H
 
 #include <QLabel>
 
@@ -11,7 +12,7 @@ class clickLabel : public QLabel
 
     public:
         explicit clickLabel(QWidget* parent = nullptr);
-        ~clickLabel();
+        virtual ~clickLabel();
 
     protected:
         bool eventFilter(QObject* obj,QEvent* e) override;
@@ -25,10 +26,12 @@ class clickLabel : public QLabel
 
     private:
         #ifdef __ANDROID__
-        bool touchBeginEventProcess(QEvent *e);
-        bool touchUpdateEventProcess(QEvent *e);
-        bool touchEndEventProcess(QEvent *e);
+            bool touchBeginEventProcess(QEvent *e);
+            bool touchUpdateEventProcess(QEvent *e);
+            bool touchEndEventProcess(QEvent *e);
         #else
-        bool mousePressEventProcess(QEvent* e);
+            bool mousePressEventProcess(QEvent* e);
         #endif
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COLLOECT_BUTTON_H
+#define COLLOECT_BUTTON_H
 
 #include <QPushButton>
 
@@ -12,7 +13,7 @@ class collectButton : public QPushButton
 
     public:
         explicit collectButton(QWidget* parent = nullptr,const QString& collect="⭐",const QString& uncollect="☆");
-        ~collectButton();
+        virtual ~collectButton();
         /* 返回是否被收藏，被收藏返回 true */
         inline bool isCollect() const { return this->text()==textOfCollect; };
 
@@ -31,8 +32,10 @@ class collectButton : public QPushButton
 
     private:
         #ifdef __ANDROID__
-        bool touchBeginEventProcess(QEvent *e);
+            bool touchBeginEventProcess(QEvent *e);
         #else
-        bool mousePressEventProcess(QEvent* e);
+            bool mousePressEventProcess(QEvent* e);
         #endif
 };
+
+#endif

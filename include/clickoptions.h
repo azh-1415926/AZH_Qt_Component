@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLICK_OPTIONS_H
+#define CLICK_OPTIONS_H
 
 #include <QGroupBox>
 #include <QEvent>
@@ -23,7 +24,7 @@ class clickOptions : public QGroupBox
 
     public:
         explicit clickOptions(QWidget* parent = nullptr);
-        ~clickOptions();
+        virtual ~clickOptions();
         /* 返回答案选项的下标 */
         inline int getAnswer() const { return this->answerOfOptions; };
 
@@ -47,3 +48,5 @@ class clickOptions : public QGroupBox
         void freeBoxes();
         QRect* setOptionOfBox(int i,QRect* rect=nullptr);
 };
+
+#endif

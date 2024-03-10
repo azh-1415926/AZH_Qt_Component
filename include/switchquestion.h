@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SWITCH_QUESTION_H
+#define SWITCH_QUESTION_H
 
 #include <QWidget>
 #include <QPushButton>
@@ -7,7 +8,8 @@
 class collectButton;
 class clickOptions;
 
-class switchQuestion : public QWidget {
+class switchQuestion : public QWidget
+{
     Q_OBJECT
 
     private:
@@ -19,9 +21,11 @@ class switchQuestion : public QWidget {
         QLabel* textOfTag;
         QLabel* textOfIndex;
         QLabel* textOfSum;
+
     public:
         explicit switchQuestion(QWidget* parent = nullptr);
-        ~switchQuestion();
+        virtual ~switchQuestion();
+        
         /* 返回当前组件的标题 */
         inline QString title() const { return this->textOfTag->text(); }
         /* 返回当前问题的下标 */
@@ -51,3 +55,5 @@ class switchQuestion : public QWidget {
     private:
         void initalQuestion();
 };
+
+#endif

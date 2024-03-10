@@ -1,9 +1,10 @@
-#pragma once
+#ifndef EXCEL_READER_H
+#define EXCEL_READER_H
 
 #include <QObject>
 
 #ifdef _WIN32
-#include <QAxObject>
+    #include <QAxObject>
 #endif
 
 class excelReader : public QObject
@@ -23,7 +24,7 @@ class excelReader : public QObject
 
     public:
         explicit excelReader(QObject* parent=nullptr);
-        ~excelReader();
+        virtual ~excelReader();
         /* 判定是否已读取 excel 文件 */
         inline bool isRead() const { return readFlag==1; }
         /* 判定当前是否重新读取过 excel 文件 */
@@ -47,3 +48,5 @@ class excelReader : public QObject
             void initalExcel();
         #endif
 };
+
+#endif

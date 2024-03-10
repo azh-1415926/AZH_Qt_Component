@@ -1,9 +1,9 @@
 #include "clicklabel.h"
 
 #ifndef __ANDROID__
-#include <QMouseEvent>
+    #include <QMouseEvent>
 #else
-#include <QTouchEvent>
+    #include <QTouchEvent>
 #endif
 
 clickLabel::clickLabel(QWidget *parent)
@@ -11,7 +11,7 @@ clickLabel::clickLabel(QWidget *parent)
 {
     this->installEventFilter(this);
     #ifdef __ANDROID__
-    this->setAttribute(Qt::WA_AcceptTouchEvents);
+        this->setAttribute(Qt::WA_AcceptTouchEvents);
     #endif
 }
 

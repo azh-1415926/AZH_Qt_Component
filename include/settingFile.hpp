@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SETTING_FILE_H
+#define SETTING_FILE_H
+
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -23,12 +25,14 @@ class settingFile : public QObject
             : QObject(parent), m_LoadFlag(0){ load(filepath); };
         explicit settingFile(const QJsonObject& json,QObject* parent = nullptr)
             : QObject(parent), m_Json(json), m_LoadFlag(0){ };
-        ~settingFile(){ };
+        virtual ~settingFile(){ };
+
         template<class T>
         void add(const QString& key,T value)
         {
             m_Json.insert(key,value);
         }
+
         template<class T>
         void add(const QString& key,QList<T> value)
         {
@@ -37,6 +41,7 @@ class settingFile : public QObject
                 array.push_back(value[i]);
             m_Json.insert(key,array);
         }
+
         template<class T1,class T2=T1>
         void add(const QString& key,QList<QPair<T1,T2>> value)
         {
@@ -52,6 +57,7 @@ class settingFile : public QObject
             array.push_back(second);
             m_Json.insert(key,array);
         }
+
         /* 删除指定关键字 */
         inline void remove(const QString& key){ m_Json.remove(key); }
         /* 判定是否已导入 */
@@ -73,7 +79,7 @@ class settingFile : public QObject
 
     public slots:
         /* 导入 json 对象 */
-        inline void load(const QJsonObject& json)
+        void load(const QJsonObject& json)
         {
             m_Json=json;
             if(m_LoadFlag)
@@ -161,3 +167,5 @@ class settingFile : public QObject
     private:
         ;
 };
+
+#endif

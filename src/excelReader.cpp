@@ -20,12 +20,12 @@ excelReader::excelReader(QObject* parent)
 excelReader::~excelReader()
 {
     #ifdef _WIN32
-    /* 退出 excel 进程，并释放内存 */
-    if(excel!=nullptr)
-    {
-       excel->dynamicCall("Quit(void)");
-        delete excel; 
-    }
+        /* 退出 excel 进程，并释放内存 */
+        if(excel!=nullptr)
+        {
+        excel->dynamicCall("Quit(void)");
+            delete excel; 
+        }
     #endif
 }
 

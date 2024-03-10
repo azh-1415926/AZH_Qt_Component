@@ -1,9 +1,9 @@
 #include "collectbutton.h"
 
 #ifndef __ANDROID__
-#include <QMouseEvent>
+    #include <QMouseEvent>
 #else
-#include <QTouchEvent>
+    #include <QTouchEvent>
 #endif
 
 collectButton::collectButton(QWidget *parent, const QString &collect, const QString &uncollect)
@@ -12,7 +12,7 @@ collectButton::collectButton(QWidget *parent, const QString &collect, const QStr
 {
     installEventFilter(this);
     #ifdef __ANDROID__
-    this->setAttribute(Qt::WA_AcceptTouchEvents);
+        this->setAttribute(Qt::WA_AcceptTouchEvents);
     #endif
 }
 
