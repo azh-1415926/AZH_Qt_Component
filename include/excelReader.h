@@ -11,7 +11,7 @@ class excelReader : public QObject
 {
     Q_OBJECT
 
-    private:
+    protected:
         int rows;
         int columns;
         int readFlag;
